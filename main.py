@@ -9,9 +9,8 @@ def main():
     root = tk.Tk()
 
     root.title("CrowPi Automation Lab")
-    root.geometry(f"{SCREEN_WIDTH}x{SCREEN_HEIGHT}")
-    root.resizable(False, False)
-
+    root.attributes("-fullscreen", True)
+    root.bind("<Escape>", lambda event: root.destroy())
     title = tk.Label(
         root,
         text="CROWPI AUTOMATION LAB",
