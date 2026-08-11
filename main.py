@@ -1,15 +1,22 @@
 import tkinter as tk
 
 
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 660
+
+
 def main():
     root = tk.Tk()
 
     root.title("CrowPi Automation Lab")
 
-    # Maximizar la ventana conservando barra de título
-    root.attributes("-zoomed", True)
+    # Ventana de desarrollo:
+    # usa todo el ancho y deja espacio para la barra superior
+    root.geometry(f"{WINDOW_WIDTH}x{WINDOW_HEIGHT}+0+30")
 
-    # Escape como salida adicional
+    root.resizable(False, False)
+
+    # Salidas seguras durante desarrollo
     root.bind("<Escape>", lambda event: root.destroy())
 
     title = tk.Label(
@@ -17,7 +24,7 @@ def main():
         text="CROWPI AUTOMATION LAB",
         font=("Arial", 30, "bold")
     )
-    title.pack(pady=40)
+    title.pack(pady=25)
 
     subtitle = tk.Label(
         root,
@@ -31,7 +38,7 @@ def main():
         text="Sistema listo",
         font=("Arial", 20)
     )
-    status.pack(pady=40)
+    status.pack(pady=30)
 
     test_button = tk.Button(
         root,
@@ -42,15 +49,24 @@ def main():
     )
     test_button.pack(pady=20)
 
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-
     resolution = tk.Label(
         root,
-        text=f"Resolución detectada: {screen_width} x {screen_height}",
+        text=(
+            f"Pantalla detectada: "
+            f"{root.winfo_screenwidth()} x "
+            f"{root.winfo_screenheight()}"
+        ),
         font=("Arial", 14)
     )
-    resolution.pack(pady=30)
+    resolution.pack(pady=20)
+
+    exit_button = tk.Button(
+        root,
+        text="SALIR",
+        font=("Arial", 16),
+        command=root.destroy
+    )
+    exit_button.pack(pady=10)
 
     root.mainloop()
 
