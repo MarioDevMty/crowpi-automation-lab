@@ -71,7 +71,8 @@ class CrowPiLabApp:
         self.input_indicator = tk.Label(
             input_frame,
             text="●",
-            font=("Arial", 70)
+            font=("Arial", 70),
+            fg="gray"
         )
         self.input_indicator.pack(pady=(15, 0))
 
@@ -141,7 +142,8 @@ class CrowPiLabApp:
         self.output_indicator = tk.Label(
             output_frame,
             text="●",
-            font=("Arial", 70)
+            font=("Arial", 70),
+            fg="gray"
         )
         self.output_indicator.pack(pady=(15, 0))
 
@@ -236,6 +238,9 @@ class CrowPiLabApp:
         self.button_pressed = True
         self.buzzer_active = True
 
+        self.input_indicator.config(fg="green")
+        self.output_indicator.config(fg="red")
+
         self.input_state.config(text="PRESIONADO")
         self.output_state.config(text="ACTIVO")
 
@@ -253,7 +258,10 @@ class CrowPiLabApp:
 
         self.button_pressed = False
         self.buzzer_active = False
-
+        
+        self.input_indicator.config(fg="gray")
+        self.output_indicator.config(fg="gray")
+        
         self.input_state.config(text="LIBERADO")
         self.output_state.config(text="APAGADO")
 
