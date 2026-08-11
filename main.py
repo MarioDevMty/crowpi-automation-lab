@@ -5,7 +5,12 @@ from datetime import datetime
 import tkinter as tk
 from datetime import datetime
 
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from config import (
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
+    BUTTON_GPIO,
+    BUZZER_GPIO,
+)
 
 
 class CrowPiLabApp:
@@ -86,7 +91,7 @@ class CrowPiLabApp:
 
         tk.Label(
             input_frame,
-            text="GPIO 26",
+            text=f"GPIO {BUTTON_GPIO}",
             font=("Arial", 14)
         ).pack()
 
@@ -157,7 +162,7 @@ class CrowPiLabApp:
 
         tk.Label(
             output_frame,
-            text="GPIO 18",
+            text=f"GPIO {BUZZER_GPIO}",
             font=("Arial", 14)
         ).pack()
 
