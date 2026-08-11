@@ -1,16 +1,27 @@
 import tkinter as tk
 
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-
-
 def main():
     root = tk.Tk()
 
     root.title("CrowPi Automation Lab")
-    root.attributes("-fullscreen", True)
+
+    # Obtener resolución real de la pantalla
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    # Forzar tamaño exacto de pantalla
+    root.geometry(f"{screen_width}x{screen_height}+0+0")
+
+    # Quitar bordes y barra de título
+    root.overrideredirect(True)
+
+    # Llevar al frente
+    root.lift()
+
+    # ESC para salir
     root.bind("<Escape>", lambda event: root.destroy())
+
     title = tk.Label(
         root,
         text="CROWPI AUTOMATION LAB",
@@ -43,7 +54,7 @@ def main():
 
     resolution = tk.Label(
         root,
-        text="Resolución objetivo: 1280 x 720",
+        text=f"Resolución detectada: {screen_width} x {screen_height}",
         font=("Arial", 14)
     )
     resolution.pack(pady=30)
