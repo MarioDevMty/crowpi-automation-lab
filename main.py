@@ -6,20 +6,10 @@ def main():
 
     root.title("CrowPi Automation Lab")
 
-    # Obtener resolución real de la pantalla
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    # Maximizar la ventana conservando barra de título
+    root.attributes("-zoomed", True)
 
-    # Forzar tamaño exacto de pantalla
-    root.geometry(f"{screen_width}x{screen_height}+0+0")
-
-    # Quitar bordes y barra de título
-    root.overrideredirect(True)
-
-    # Llevar al frente
-    root.lift()
-
-    # ESC para salir
+    # Escape como salida adicional
     root.bind("<Escape>", lambda event: root.destroy())
 
     title = tk.Label(
@@ -51,6 +41,9 @@ def main():
         height=2
     )
     test_button.pack(pady=20)
+
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
 
     resolution = tk.Label(
         root,
