@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime
 from hardware.controller import HardwareController
 
+from hardware.real_gpio import RealGPIOController
 import tkinter as tk
 from datetime import datetime
 
@@ -10,10 +11,39 @@ from config import (
     WINDOW_HEIGHT,
     BUTTON_GPIO,
     BUZZER_GPIO,
+    MODE_SIMULATION,
+    MODE_REAL,
+    DEFAULT_MODE,
 )
 
 
 class CrowPiLabApp:
+    def poll_real_hardware(self):
+
+        current_state = self.hardware.is_button_pressed()
+
+        if current_state != self.last_button_state:
+
+            if current_state:
+                self.hardware.buzzer_on()
+                self.show_pressed_state()
+
+                self.add_event("Botón físico presionado")
+                self.add_event("Buzzer físico activado")
+
+            else:
+                self.hardware.buzzer_off()
+                self.show_released_state()
+
+                self.add_event("Botón físico liberado")
+                self.add_event("Buzzer físico apagado")
+
+            self.last_button_state = current_state
+
+        self.root.after(
+            50,
+            self.poll_real_hardware
+        )
     def __init__(self, root):
         self.root = root
         self.root.title("CrowPi Automation Lab")
@@ -26,12 +56,25 @@ class CrowPiLabApp:
         self.root.bind("<Escape>", lambda event: self.root.destroy())
 
         # Estado inicial de simulación
-        self.hardware = HardwareController()
+        self.mode = DEFAULT_MODE
+
+        if self.mode == MODE_REAL:
+            self.hardware = RealGPIOController(
+                BUTTON_GPIO,
+                BUZZER_GPIO
+            )
+        else:
+            self.hardware = HardwareController()
 
         self.build_interface()
 
         self.add_event("Sistema iniciado")
-        self.add_event("Modo SIMULACIÓN activo")
+        self.add_event(f"Modo {self.mode} activo")
+
+        self.last_button_state = False
+
+        if self.mode == MODE_REAL:
+            self.poll_real_hardware()
 
     def build_interface(self):
 
@@ -181,7 +224,7 @@ class CrowPiLabApp:
 
         mode_label = tk.Label(
             controls,
-            text="MODO: SIMULACIÓN",
+            text=f"MODO: {self.mode}",
             font=("Arial", 16, "bold")
         )
         mode_label.pack(side="left", padx=20)
@@ -238,10 +281,46 @@ class CrowPiLabApp:
 
     def press_button(self, event=None):
 
+        if self.mode != MODE_SIMULATION:
+            return
+
         if self.hardware.is_button_pressed():
             return
 
         self.hardware.press_button()
+
+        self.show_pressed_state()
+
+        self.add_event("Botón simulado presionado")
+        self.add_event("Buzzer simulado activado")
+    
+    def release_button(self, event=None):
+
+        if self.mode != MODE_SIMULATION:
+            return
+
+        if not self.hardware.is_button_pressed():
+            return
+
+        self.hardware.release_button()
+
+        self.show_released_state()
+
+        self.add_event("Botón simulado liberado")
+        self.add_event("Buzzer simulado apagado")
+    def add_event(self, message):
+
+        timestamp = datetime.now().strftime("%H:%M:%S")
+
+        self.log_text.config(state="normal")
+        self.log_text.insert(
+            "end",
+            f"{timestamp}  {message}\n"
+        )
+        self.log_text.see("end")
+        self.log_text.config(state="disabled")
+        
+    def show_pressed_state(self):
 
         self.input_indicator.config(fg="green")
         self.output_indicator.config(fg="red")
@@ -254,16 +333,8 @@ class CrowPiLabApp:
                 "CONDICIÓN = TRUE\n\n"
                 "buzzer = ON"
         )
-
-        self.add_event("Botón presionado")
-        self.add_event("Buzzer activado")
-
-    def release_button(self, event=None):
-
-        if not self.hardware.is_button_pressed():
-            return
-
-        self.hardware.release_button()
+        
+    def show_released_state(self):
 
         self.input_indicator.config(fg="gray")
         self.output_indicator.config(fg="gray")
@@ -276,21 +347,6 @@ class CrowPiLabApp:
                 "CONDICIÓN = FALSE\n\n"
                 "buzzer = OFF"
         )
-
-        self.add_event("Botón liberado")
-        self.add_event("Buzzer apagado")
-
-    def add_event(self, message):
-
-        timestamp = datetime.now().strftime("%H:%M:%S")
-
-        self.log_text.config(state="normal")
-        self.log_text.insert(
-            "end",
-            f"{timestamp}  {message}\n"
-        )
-        self.log_text.see("end")
-        self.log_text.config(state="disabled")
 
 
 def main():
