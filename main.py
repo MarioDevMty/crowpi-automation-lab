@@ -1,6 +1,6 @@
 import tkinter as tk
 from datetime import datetime
-
+from hardware.controller import HardwareController
 
 import tkinter as tk
 from datetime import datetime
@@ -26,8 +26,7 @@ class CrowPiLabApp:
         self.root.bind("<Escape>", lambda event: self.root.destroy())
 
         # Estado inicial de simulación
-        self.button_pressed = False
-        self.buzzer_active = False
+        self.hardware = HardwareController()
 
         self.build_interface()
 
@@ -239,11 +238,10 @@ class CrowPiLabApp:
 
     def press_button(self, event=None):
 
-        if self.button_pressed:
+        if self.hardware.is_button_pressed():
             return
 
-        self.button_pressed = True
-        self.buzzer_active = True
+        self.hardware.press_button()
 
         self.input_indicator.config(fg="green")
         self.output_indicator.config(fg="red")
@@ -252,7 +250,9 @@ class CrowPiLabApp:
         self.output_state.config(text="ACTIVO")
 
         self.logic_state.config(
-            text="botón = PRESIONADO\n\nCONDICIÓN = TRUE\n\nbuzzer = ON"
+            text="botón = PRESIONADO\n\n"
+                "CONDICIÓN = TRUE\n\n"
+                "buzzer = ON"
         )
 
         self.add_event("Botón presionado")
@@ -260,20 +260,21 @@ class CrowPiLabApp:
 
     def release_button(self, event=None):
 
-        if not self.button_pressed:
+        if not self.hardware.is_button_pressed():
             return
 
-        self.button_pressed = False
-        self.buzzer_active = False
-        
+        self.hardware.release_button()
+
         self.input_indicator.config(fg="gray")
         self.output_indicator.config(fg="gray")
-        
+
         self.input_state.config(text="LIBERADO")
         self.output_state.config(text="APAGADO")
 
         self.logic_state.config(
-            text="botón = LIBERADO\n\nCONDICIÓN = FALSE\n\nbuzzer = OFF"
+            text="botón = LIBERADO\n\n"
+                "CONDICIÓN = FALSE\n\n"
+                "buzzer = OFF"
         )
 
         self.add_event("Botón liberado")
