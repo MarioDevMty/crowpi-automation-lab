@@ -1,58 +1,32 @@
-try:
-    import RPi.GPIO as GPIO
-except ImportError:
-    GPIO = None
+from gpiozero import Button, Buzzer
 
 
 class RealGPIOController:
     def __init__(self, button_gpio, buzzer_gpio):
 
-        if GPIO is None:
-            raise RuntimeError(
-                "RPi.GPIO no está disponible. "
-                "Este controlador debe ejecutarse en Raspberry Pi."
-            )
-
-        self.button_gpio = button_gpio
-        self.buzzer_gpio = buzzer_gpio
-
-        GPIO.setmode(GPIO.BCM)
-
-        GPIO.setup(
-            self.button_gpio,
-            GPIO.IN,
-            pull_up_down=GPIO.PUD_UP
+        self.button = Button(
+            button_gpio,
+            pull_up=True,
+            bounce_time=0.05
         )
 
-        GPIO.setup(
-            self.buzzer_gpio,
-            GPIO.OUT
+        self.buzzer = Buzzer(
+            buzzer_gpio
         )
 
-        GPIO.output(
-            self.buzzer_gpio,
-            GPIO.LOW
-        )
+        self.buzzer.off()
 
     def is_button_pressed(self):
-        return GPIO.input(self.button_gpio) == GPIO.LOW
+        return self.button.is_pressed
 
     def buzzer_on(self):
-        GPIO.output(
-            self.buzzer_gpio,
-            GPIO.HIGH
-        )
+        self.buzzer.on()
 
     def buzzer_off(self):
-        GPIO.output(
-            self.buzzer_gpio,
-            GPIO.LOW
-        )
+        self.buzzer.off()
 
     def cleanup(self):
-        GPIO.output(
-            self.buzzer_gpio,
-            GPIO.LOW
-        )
-
-        GPIO.cleanup()
+        self.buzzer.off()
+        self.button.close()
+        self.buzzer.close()
+        
