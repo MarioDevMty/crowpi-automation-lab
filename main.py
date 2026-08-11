@@ -2,8 +2,10 @@ import tkinter as tk
 from datetime import datetime
 
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 660
+import tkinter as tk
+from datetime import datetime
+
+from config import WINDOW_WIDTH, WINDOW_HEIGHT
 
 
 class CrowPiLabApp:
